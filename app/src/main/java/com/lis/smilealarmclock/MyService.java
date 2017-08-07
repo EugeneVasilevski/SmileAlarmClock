@@ -6,41 +6,52 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-/**
- * Created by Yauheni_Vasileuski on 8/7/2017.
- */
+import java.util.concurrent.TimeUnit;
 
 public class MyService extends Service {
 
-    final String TAG = this.getClass().getName();
+    final String TAG = "MyLog";
 
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
+        Log.i(TAG, "onCreate");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
-        Log.d(TAG, "onStartCommand");
+        Log.i(TAG, "onStartCommand");
         someTask();
         return START_STICKY;
     }
 
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
+        Log.i(TAG, "onDestroy");
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
+        Log.i(TAG, "onBind");
         return null;
     }
 
     private void someTask() {
-        Log.d(TAG, "someTask");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i <= 60; i++) {
+                    Log.i(TAG, Integer.toString(i));
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                stopSelf();
+            }
+        }).start();
     }
 }
