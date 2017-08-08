@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.text);
+
+        AlarmClockTask alarmClockTask = new AlarmClockTask(12, 37, false, false, this);
+        alarmClockTask.start();
     }
 
     public void clickOnStart(View view) {
