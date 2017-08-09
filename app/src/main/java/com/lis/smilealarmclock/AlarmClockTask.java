@@ -4,38 +4,59 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import java.util.Calendar;
 
 public class AlarmClockTask {
 
-    private int hour;
-    private int minute;
-    private boolean repeat;
-    private boolean camera;
+    final String TAG = AlarmClockTask.class.getSimpleName();
+
+    private AlarmClock alarmClock;
+    private AlarmManager alarmManager;
+    private Intent intent;
+    private PendingIntent pendingIntent;
     private Context context;
 
-    public AlarmClockTask(int hour, int minute, boolean repeat, boolean camera, Context context) {
-        this.hour = hour;
-        this.minute = minute;
-        this.repeat = repeat;
-        this.camera = camera;
+    public AlarmClockTask(AlarmClock alarmClock, Context context) {
+        this.alarmClock = alarmClock;
         this.context = context;
     }
 
     public void start() {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.HOUR_OF_DAY, alarmClock.getHour());
+        calendar.set(Calendar.MINUTE, alarmClock.getMinute());
+        calendar.set(Calendar.SECOND, 0);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+        intent = createIntent("action", "extra");
+        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+
+        Log.d(TAG, "start");
+
+        if (alarmClock.isRepeat()) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
     }
 
-    public void stop() {}
+    private Intent createIntent(String action, String extra) {
+        Intent intent = new Intent(context, AlarmClockReceiver.class);
+        intent.setAction(action);
+        intent.putExtra("extra", extra);
+        return intent;
+    }
+
+    public void stop() {
+        if (alarmManager!= null) {
+            alarmManager.cancel(pendingIntent);
+        }
+    }
+
+    public void update() {}
 }

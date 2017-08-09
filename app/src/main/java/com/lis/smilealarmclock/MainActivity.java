@@ -5,10 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
+    private TimePicker timePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,9 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.text);
-
-        AlarmClockTask alarmClockTask = new AlarmClockTask(12, 37, false, false, this);
-        alarmClockTask.start();
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
     }
 
     public void clickOnStart(View view) {
@@ -31,5 +31,12 @@ public class MainActivity extends AppCompatActivity {
     public void clickOnStop(View view) {
         stopService(new Intent(this, AlarmClockService.class));
         textView.setText("Service stopped");
+    }
+
+    public void click(View view) {
+        AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
+                timePicker.getCurrentMinute(), false, false);
+        AlarmClockTask alarmClockTask = new AlarmClockTask(alarmClock, this);
+        alarmClockTask.start();
     }
 }
