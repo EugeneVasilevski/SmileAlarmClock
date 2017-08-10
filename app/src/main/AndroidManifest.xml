@@ -23,11 +23,17 @@
         <activity android:name=".CameraSmileActivity">
         </activity>
 
-        <receiver android:name=".AlarmClockReceiver">
+        <receiver android:name=".AlarmClockTaskBootReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".AlarmClockTaskStarterReceiver">
         </receiver>
 
         <service android:name=".AlarmClockService">
         </service>
     </application>
-
 </manifest>
