@@ -45,6 +45,8 @@ public class AlarmClockTask {
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
+
+        //something();
     }
 
     public void something() {

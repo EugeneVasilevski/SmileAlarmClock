@@ -8,7 +8,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
+
+    final String TAG = this.getClass().getSimpleName();
 
     private TextView textView;
     private TimePicker timePicker;
@@ -36,8 +40,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void click(View view) {
         AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
-                timePicker.getCurrentMinute(), false, false);
+                timePicker.getCurrentMinute(), true, false, false);
         AlarmClockTask alarmClockTask = new AlarmClockTask(alarmClock, this);
         alarmClockTask.start();
+
+        Log.d(TAG, "click");
+
+        /*AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
+        alarmClockDatabase.connection();
+        alarmClockDatabase.add(new AlarmClock(timePicker.getCurrentHour(),
+                timePicker.getCurrentMinute(), true, false, false));
+
+        ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
+        //textView.setText(Integer.toString(alarmClockList.get(0).getMinute()));
+        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));*/
     }
 }
