@@ -1,6 +1,6 @@
 package com.lis.smilealarmclock;
 
-public class AlarmClock {
+public final class AlarmClock {
 
     private int id;
     private int hour;
@@ -25,51 +25,57 @@ public class AlarmClock {
         this.camera = camera;
     }
 
-    public int getId() {
+    public final AlarmClock setId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public final AlarmClock setHour(int hour) {
+        this.hour = hour;
+        return this;
+    }
+
+    public final AlarmClock setMinute(int minute) {
+        this.minute = minute;
+        return this;
+    }
+
+    public final AlarmClock setActive(boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    public final AlarmClock setRepeat(boolean repeat) {
+        this.repeat = repeat;
+        return this;
+    }
+
+    public final AlarmClock setCamera(boolean camera) {
+        this.camera = camera;
+        return this;
+    }
+
+    public final int getId() {
         return this.id;
     }
 
-    public int getHour() {
+    public final int getHour() {
         return this.hour;
     }
 
-    public int getMinute() {
+    public final int getMinute() {
         return this.minute;
     }
 
-    public boolean isActive() {
+    public final boolean isActive() {
         return this.active;
     }
 
-    public boolean isRepeat() {
+    public final boolean isRepeat() {
         return this.repeat;
     }
 
-    public boolean isCamera() {
+    public final boolean isCamera() {
         return this.camera;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    public void setMinute(int minute) {
-        this.minute = minute;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
-    }
-
-    public void setCamera(boolean camera) {
-        this.camera = camera;
     }
 }

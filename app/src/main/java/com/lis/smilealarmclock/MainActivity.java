@@ -27,32 +27,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickOnStart(View view) {
-        startService(new Intent(this, AlarmClockService.class).putExtra("time", 4));
+        /*startService(new Intent(this, AlarmClockService.class).putExtra("time", 4));
         startService(new Intent(this, AlarmClockService.class).putExtra("time", 7));
         startService(new Intent(this, AlarmClockService.class).putExtra("time", 5));
-        textView.setText("Service started");
+        textView.setText("Service started");*/
+
+        AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
+        alarmClockDatabase.connection();
+        ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
+
+        AlarmClock alarmClock = alarmClockList.get(alarmClockList.size() - 1);
+        alarmClock.setHour(timePicker.getCurrentHour());
+        alarmClock.setMinute(timePicker.getCurrentMinute());
+
+        alarmClockDatabase.update(alarmClock);
+        alarmClockList = alarmClockDatabase.getAll();
+
+        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
+        alarmClockDatabase.close();
     }
 
     public void clickOnStop(View view) {
-        stopService(new Intent(this, AlarmClockService.class));
-        textView.setText("Service stopped");
+        /*stopService(new Intent(this, AlarmClockService.class));
+        textView.setText("Service stopped");*/
+
+        AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
+        alarmClockDatabase.connection();
+        ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
+
+        AlarmClock alarmClock = alarmClockList.get(alarmClockList.size() - 1);
+
+        alarmClockDatabase.delete(alarmClock);
+
+        alarmClockList = alarmClockDatabase.getAll();
+        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
     }
 
     public void click(View view) {
-        AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
+       /*AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
                 timePicker.getCurrentMinute(), true, false, false);
         AlarmClockTask alarmClockTask = new AlarmClockTask(alarmClock, this);
-        alarmClockTask.start();
+        alarmClockTask.start();*/
 
         Log.d(TAG, "click");
 
-        /*AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
+        AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
         alarmClockDatabase.connection();
         alarmClockDatabase.add(new AlarmClock(timePicker.getCurrentHour(),
                 timePicker.getCurrentMinute(), true, false, false));
 
-        ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
+        ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAllActive();
         //textView.setText(Integer.toString(alarmClockList.get(0).getMinute()));
-        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));*/
+        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
+        alarmClockDatabase.close();
     }
 }
