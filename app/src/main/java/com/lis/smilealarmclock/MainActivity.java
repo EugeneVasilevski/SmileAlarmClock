@@ -36,14 +36,19 @@ public class MainActivity extends AppCompatActivity {
         alarmClockDatabase.connection();
         ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
 
-        AlarmClock alarmClock = alarmClockList.get(alarmClockList.size() - 1);
-        alarmClock.setHour(timePicker.getCurrentHour());
-        alarmClock.setMinute(timePicker.getCurrentMinute());
+        if (alarmClockList != null) {
+            AlarmClock alarmClock = alarmClockList.get(alarmClockList.size() - 1);
+            alarmClock.setHour(timePicker.getCurrentHour());
+            alarmClock.setMinute(timePicker.getCurrentMinute());
 
-        alarmClockDatabase.update(alarmClock);
-        alarmClockList = alarmClockDatabase.getAll();
+            alarmClockDatabase.update(alarmClock);
+            alarmClockList = alarmClockDatabase.getAll();
 
-        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
+            textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
+        } else {
+            textView.setText("Database is empty");
+        }
+
         alarmClockDatabase.close();
     }
 
@@ -55,23 +60,32 @@ public class MainActivity extends AppCompatActivity {
         alarmClockDatabase.connection();
         ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
 
-        AlarmClock alarmClock = alarmClockList.get(alarmClockList.size() - 1);
+        if (alarmClockList != null) {
+            AlarmClock alarmClock = alarmClockList.get(alarmClockList.size() - 1);
+            alarmClockDatabase.delete(alarmClock.getId());
+        } else {
+            textView.setText("Database is empty");
+        }
 
-        alarmClockDatabase.delete(alarmClock);
-
+        alarmClockDatabase.getById(1);
         alarmClockList = alarmClockDatabase.getAll();
-        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
+
+        if (alarmClockList != null) {
+            textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
+        } else {
+            textView.setText("Database is empty");
+        }
     }
 
     public void click(View view) {
-       /*AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
+       AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
                 timePicker.getCurrentMinute(), true, false, false);
-        AlarmClockTask alarmClockTask = new AlarmClockTask(alarmClock, this);
-        alarmClockTask.start();*/
+        AlarmClockTask alarmClockTask = new AlarmClockTask(this);
+        alarmClockTask.start(alarmClock);
 
         Log.d(TAG, "click");
 
-        AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
+        /*AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
         alarmClockDatabase.connection();
         alarmClockDatabase.add(new AlarmClock(timePicker.getCurrentHour(),
                 timePicker.getCurrentMinute(), true, false, false));
@@ -79,6 +93,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAllActive();
         //textView.setText(Integer.toString(alarmClockList.get(0).getMinute()));
         textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
-        alarmClockDatabase.close();
+        alarmClockDatabase.close();*/
     }
 }

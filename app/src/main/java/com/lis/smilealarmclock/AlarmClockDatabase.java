@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -30,27 +31,31 @@ public class AlarmClockDatabase {
     }
 
     public void add(AlarmClock alarmClock) {
-        database.insert(tableName, null, fillContentValues(alarmClock));
+        database.insert(tableName, null, fillAllContentValues(alarmClock));
     }
 
     public void update(AlarmClock alarmClock) {
-        database.update(tableName, fillContentValues(alarmClock),
+        database.update(tableName, fillAllContentValues(alarmClock),
                 "id = " + alarmClock.getId(), null);
     }
 
-    private ContentValues fillContentValues(AlarmClock alarmClock) {
+    public void updateParameter(int id, String parameter, int value) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(parameter, value);
+        database.update(tableName, contentValues, "id = " + id, null);
+    }
+
+    private ContentValues fillAllContentValues(AlarmClock alarmClock) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("hour", alarmClock.getHour());
         contentValues.put("minute", alarmClock.getMinute());
         contentValues.put("active", alarmClock.isActive());
         contentValues.put("repeat", alarmClock.isRepeat());
         contentValues.put("camera", alarmClock.isCamera());
-
         return contentValues;
     }
 
-    public void delete(AlarmClock alarmClock) {
-        String id = Integer.toString(alarmClock.getId());
+    public void delete(int id) {
         database.delete(tableName, "id = " + id, null);
     }
 
@@ -58,43 +63,53 @@ public class AlarmClockDatabase {
         database.delete(tableName, null, null);
     }
 
-    public AlarmClock get() {
-        return new AlarmClock(17, 30, true, false, false);
+    public AlarmClock getById(int id) {
+        return getAlarmClock(database.query(tableName, null, "id = " + id, null, null, null, null));
     }
 
     public ArrayList<AlarmClock> getAll() {
-        return result(database.query(tableName, null, null, null, null, null, null));
+        return getAlarmClockList(database.query(tableName, null, null, null, null, null, null));
     }
 
     public ArrayList<AlarmClock> getAllActive() {
-        return result(database.query(tableName, null, "active = 1", null, null, null, null));
+        return getAlarmClockList(database.query(tableName, null, "active = 1", null, null, null, null));
     }
 
-    private ArrayList<AlarmClock> result(Cursor cursor) {
+    @Nullable
+    private ArrayList<AlarmClock> getAlarmClockList(Cursor cursor) {
         if (!cursor.moveToFirst()) {
             return null;
         }
 
         ArrayList<AlarmClock> alarmClockList  = new ArrayList<>(cursor.getCount());
 
-        int idIndex = cursor.getColumnIndex("id");
+        /*int idIndex = cursor.getColumnIndex("id");
         int hourIndex = cursor.getColumnIndex("hour");
         int minuteIndex = cursor.getColumnIndex("minute");
         int activeIndex = cursor.getColumnIndex("active");
         int repeatIndex = cursor.getColumnIndex("repeat");
-        int cameraIndex = cursor.getColumnIndex("camera");
+        int cameraIndex = cursor.getColumnIndex("camera");*/
 
         do {
-            alarmClockList.add(new AlarmClock()
-                    .setId(cursor.getInt(idIndex))
-                    .setHour(cursor.getInt(hourIndex))
-                    .setMinute(cursor.getInt(minuteIndex))
-                    .setActive(cursor.getInt(activeIndex) == 1)
-                    .setRepeat(cursor.getInt(repeatIndex) == 1)
-                    .setCamera(cursor.getInt(cameraIndex) == 1));
+            alarmClockList.add(getAlarmClock(cursor));
         } while (cursor.moveToNext());
 
         return alarmClockList;
+    }
+
+    @Nullable
+    private AlarmClock getAlarmClock(Cursor cursor) {
+        if (!cursor.moveToFirst()) {
+            return null;
+        }
+
+        return new AlarmClock()
+                .setId(cursor.getInt(cursor.getColumnIndex("id")))
+                .setHour(cursor.getInt(cursor.getColumnIndex("hour")))
+                .setMinute(cursor.getInt(cursor.getColumnIndex("minute")))
+                .setActive(cursor.getInt(cursor.getColumnIndex("active")) == 1)
+                .setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")) == 1)
+                .setCamera(cursor.getInt(cursor.getColumnIndex("camera")) == 1);
     }
 
     public void close() {

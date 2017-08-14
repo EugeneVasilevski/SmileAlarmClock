@@ -22,10 +22,7 @@ public class AlarmClockTaskBootReceiver extends BroadcastReceiver {
             if (alarmClockDatabase.connection()) {
                 ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAllActive();
                 if (alarmClockList != null) {
-                    for (AlarmClock alarmClock : alarmClockList) {
-                        AlarmClockTask alarmClockTask = new AlarmClockTask(alarmClock, context);
-                        alarmClockTask.start();
-                    }
+                    new AlarmClockTask(context).startAll(alarmClockList);
                 }
             }
         }
