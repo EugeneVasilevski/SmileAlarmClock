@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         /*stopService(new Intent(this, AlarmClockService.class));
         textView.setText("Service stopped");*/
 
-        AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
+        /*AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
         alarmClockDatabase.connection();
         ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
 
@@ -74,12 +74,22 @@ public class MainActivity extends AppCompatActivity {
             textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getMinute()));
         } else {
             textView.setText("Database is empty");
-        }
+        }*/
+
+        AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
+                timePicker.getCurrentMinute(), true, false, false);
+        alarmClock.setId(0);
+        AlarmClockTask alarmClockTask = new AlarmClockTask(this);
+        alarmClockTask.start(alarmClock);
     }
+
+    int id = 0;
 
     public void click(View view) {
        AlarmClock alarmClock = new AlarmClock(timePicker.getCurrentHour(),
                 timePicker.getCurrentMinute(), true, false, false);
+        alarmClock.setId(id);
+        id++;
         AlarmClockTask alarmClockTask = new AlarmClockTask(this);
         alarmClockTask.start(alarmClock);
 

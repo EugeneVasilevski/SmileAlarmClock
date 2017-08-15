@@ -30,6 +30,9 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".AlarmClockTaskStarterReceiver">
+        </receiver>
+
         <service android:name=".AlarmClockService">
         </service>
     </application>

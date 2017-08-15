@@ -27,14 +27,15 @@ public class AlarmClockTask {
         if (alarmClock.isRepeat()) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                     createCalendar(alarmClock).getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, createPendingIntent(alarmClock));
+                    AlarmManager.INTERVAL_DAY,
+                    createPendingIntent(alarmClock));
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP,
                     createCalendar(alarmClock).getTimeInMillis(),
                     createPendingIntent(alarmClock));
         }
 
-        //something();
+        //startTaskAfterReboot();
     }
 
     public void startAll(ArrayList<AlarmClock> alarmClockList) {
@@ -42,8 +43,6 @@ public class AlarmClockTask {
             start(alarmClock);
         }
     }
-
-    public void update() {}
 
     public void stop(AlarmClock alarmClock) {
         if (alarmManager!= null) {
@@ -61,25 +60,26 @@ public class AlarmClockTask {
     }
 
     private PendingIntent createPendingIntent(AlarmClock alarmClock) {
-        Intent intent;
-
         if (alarmClock.isCamera()) {
-            intent = new Intent(context, CameraSmileActivity.class);
+            return PendingIntent.getActivity(context,
+                    alarmClock.getId(),
+                    new Intent(context, CameraSmileActivity.class),
+                    PendingIntent.FLAG_CANCEL_CURRENT);
         } else {
-            intent = new Intent(context, CameraSmileActivity.class);
+            return PendingIntent.getActivity(context,
+                    alarmClock.getId(),
+                    new Intent(context, CameraSmileActivity.class),
+                    PendingIntent.FLAG_CANCEL_CURRENT);
         }
-        return PendingIntent.getActivity(context, 0, intent, 0);
     }
 
-    public void something() {
+    public void startTaskAfterReboot() {
         ComponentName receiver = new ComponentName(context, AlarmClockTaskBootReceiver.class);
         PackageManager pm = context.getPackageManager();
 
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
-
-        Log.d(TAG, "start");
     }
 
     private Intent createIntent(String action, String extra) {
