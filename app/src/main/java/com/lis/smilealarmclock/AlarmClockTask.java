@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,17 +59,12 @@ public class AlarmClockTask {
     }
 
     private PendingIntent createPendingIntent(AlarmClock alarmClock) {
-        if (alarmClock.isCamera()) {
-            return PendingIntent.getActivity(context,
-                    alarmClock.getId(),
-                    new Intent(context, CameraSmileActivity.class),
-                    PendingIntent.FLAG_CANCEL_CURRENT);
-        } else {
-            return PendingIntent.getActivity(context,
-                    alarmClock.getId(),
-                    new Intent(context, CameraSmileActivity.class),
-                    PendingIntent.FLAG_CANCEL_CURRENT);
-        }
+        return PendingIntent.getActivity(context,
+                alarmClock.getId(),
+                new Intent(context, CameraSmileActivity.class)
+                        .putExtra("repeat", alarmClock.isRepeat())
+                        .putExtra("camera", alarmClock.isCamera()),
+                PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     public void startTaskAfterReboot() {
