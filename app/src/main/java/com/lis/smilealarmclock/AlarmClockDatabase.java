@@ -103,13 +103,14 @@ public class AlarmClockDatabase {
             return null;
         }
 
-        return new AlarmClock()
-                .setId(cursor.getInt(cursor.getColumnIndex("id")))
-                .setHour(cursor.getInt(cursor.getColumnIndex("hour")))
-                .setMinute(cursor.getInt(cursor.getColumnIndex("minute")))
-                .setActive(cursor.getInt(cursor.getColumnIndex("active")) == 1)
-                .setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")) == 1)
-                .setCamera(cursor.getInt(cursor.getColumnIndex("camera")) == 1);
+        return new AlarmClock(
+                cursor.getInt(cursor.getColumnIndex("id")),
+                cursor.getInt(cursor.getColumnIndex("hour")),
+                cursor.getInt(cursor.getColumnIndex("minute")),
+                (cursor.getInt(cursor.getColumnIndex("active")) == 1),
+                (cursor.getInt(cursor.getColumnIndex("repeat")) == 1),
+                (cursor.getInt(cursor.getColumnIndex("camera")) == 1),
+                null);
     }
 
     public void close() {

@@ -8,20 +8,16 @@ public final class AlarmClock {
     private boolean active;
     private boolean repeat;
     private boolean camera;
+    private boolean[] activeDays;
 
-    public AlarmClock() {
-        this.hour = 0;
-        this.minute = 0;
-        this.active = false;
-        this.repeat = false;
-        this.camera = false;
-    }
-
-    public AlarmClock(int hour, int minute, boolean active, boolean repeat, boolean camera) {
+    public AlarmClock(int id, int hour, int minute, boolean active,
+                      boolean repeat, boolean camera, boolean[] activeDays) {
+        this.id = id;
         this.hour = hour;
         this.minute = minute;
         this.active = active;
         this.repeat = repeat;
+        this.activeDays = activeDays;
         this.camera = camera;
     }
 
@@ -50,6 +46,11 @@ public final class AlarmClock {
         return this;
     }
 
+    public final AlarmClock setActiveDays(boolean[] activeDays) {
+        this.activeDays = activeDays;
+        return this;
+    }
+
     public final AlarmClock setCamera(boolean camera) {
         this.camera = camera;
         return this;
@@ -65,6 +66,10 @@ public final class AlarmClock {
 
     public final int getMinute() {
         return this.minute;
+    }
+
+    public final boolean[] getActiveDays() {
+        return this.activeDays;
     }
 
     public final boolean isActive() {

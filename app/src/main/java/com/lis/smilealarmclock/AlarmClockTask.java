@@ -25,13 +25,13 @@ public class AlarmClockTask {
     public void start(AlarmClock alarmClock) {
         if (alarmClock.isRepeat()) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    createCalendar(alarmClock).getTimeInMillis(),
+                    getStartUpTime(alarmClock),
                     AlarmManager.INTERVAL_DAY,
-                    createPendingIntent(alarmClock));
+                    getPendingIntent(alarmClock));
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP,
-                    createCalendar(alarmClock).getTimeInMillis(),
-                    createPendingIntent(alarmClock));
+                    getStartUpTime(alarmClock),
+                    getPendingIntent(alarmClock));
         }
 
         //startTaskAfterReboot();
@@ -45,20 +45,27 @@ public class AlarmClockTask {
 
     public void stop(AlarmClock alarmClock) {
         if (alarmManager!= null) {
-            alarmManager.cancel(createPendingIntent(alarmClock));
+            alarmManager.cancel(getPendingIntent(alarmClock));
         }
     }
 
-    private Calendar createCalendar(AlarmClock alarmClock) {
+    private long getStartUpTime(AlarmClock alarmClock) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+
         calendar.set(Calendar.HOUR_OF_DAY, alarmClock.getHour());
         calendar.set(Calendar.MINUTE, alarmClock.getMinute());
         calendar.set(Calendar.SECOND, 0);
-        return calendar;
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        long startUpTime = calendar.getTimeInMillis();
+
+        if (startUpTime < System.currentTimeMillis()) {
+            startUpTime += AlarmManager.INTERVAL_DAY;
+        }
+        return startUpTime;
     }
 
-    private PendingIntent createPendingIntent(AlarmClock alarmClock) {
+    private PendingIntent getPendingIntent(AlarmClock alarmClock) {
         return PendingIntent.getActivity(context,
                 alarmClock.getId(),
                 new Intent(context, CameraSmileActivity.class)
