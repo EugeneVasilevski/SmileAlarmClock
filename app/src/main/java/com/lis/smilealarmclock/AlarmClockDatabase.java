@@ -31,11 +31,11 @@ public class AlarmClockDatabase {
     }
 
     public void add(AlarmClock alarmClock) {
-        database.insert(tableName, null, fillAllContentValues(alarmClock));
+        database.insert(tableName, null, getAlarmClockContentValues(alarmClock));
     }
 
     public void update(AlarmClock alarmClock) {
-        database.update(tableName, fillAllContentValues(alarmClock),
+        database.update(tableName, getAlarmClockContentValues(alarmClock),
                 "id = " + alarmClock.getId(), null);
     }
 
@@ -43,16 +43,6 @@ public class AlarmClockDatabase {
         ContentValues contentValues = new ContentValues();
         contentValues.put(parameter, value);
         database.update(tableName, contentValues, "id = " + id, null);
-    }
-
-    private ContentValues fillAllContentValues(AlarmClock alarmClock) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("hour", alarmClock.getHour());
-        contentValues.put("minute", alarmClock.getMinute());
-        contentValues.put("active", alarmClock.isActive());
-        contentValues.put("repeat", alarmClock.isRepeat());
-        contentValues.put("camera", alarmClock.isCamera());
-        return contentValues;
     }
 
     public void delete(int id) {
@@ -64,15 +54,42 @@ public class AlarmClockDatabase {
     }
 
     public AlarmClock getById(int id) {
-        return getAlarmClock(database.query(tableName, null, "id = " + id, null, null, null, null));
+        ArrayList<AlarmClock> alarmClockList = getAlarmClockList(database.query(tableName,
+                null, "id = " + id, null, null, null, null));
+
+        if (alarmClockList == null) {
+            return null;
+        }
+
+        return alarmClockList.get(0);
     }
 
     public ArrayList<AlarmClock> getAll() {
-        return getAlarmClockList(database.query(tableName, null, null, null, null, null, null));
+        return getAlarmClockList(database.query(tableName, null, null,
+                null, null, null, null));
     }
 
     public ArrayList<AlarmClock> getAllActive() {
-        return getAlarmClockList(database.query(tableName, null, "active = 1", null, null, null, null));
+        return getAlarmClockList(database.query(tableName, null, "active = 1",
+                null, null, null, null));
+    }
+
+    public void close() {
+        databaseHelper.close();
+    }
+
+    private ContentValues getAlarmClockContentValues(AlarmClock alarmClock) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("hour", alarmClock.getHour());
+        contentValues.put("minute", alarmClock.getMinute());
+        contentValues.put("active", alarmClock.isActive());
+        contentValues.put("camera", alarmClock.isCamera());
+
+        if (alarmClock.isRepeat()) {
+            contentValues.put("activeDays", convertToString(alarmClock.getActiveDays()));
+        }
+
+        return contentValues;
     }
 
     @Nullable
@@ -91,30 +108,51 @@ public class AlarmClockDatabase {
         int cameraIndex = cursor.getColumnIndex("camera");*/
 
         do {
-            alarmClockList.add(getAlarmClock(cursor));
+            alarmClockList.add(new AlarmClock(
+                    cursor.getInt(cursor.getColumnIndex("id")),
+                    cursor.getInt(cursor.getColumnIndex("hour")),
+                    cursor.getInt(cursor.getColumnIndex("minute")),
+                    (cursor.getInt(cursor.getColumnIndex("active")) == 1),
+                    (cursor.getInt(cursor.getColumnIndex("camera")) == 1),
+                    convertToBooleanArray(cursor.getString(cursor.getColumnIndex("activeDays")))));
         } while (cursor.moveToNext());
 
         return alarmClockList;
     }
 
-    @Nullable
-    private AlarmClock getAlarmClock(Cursor cursor) {
-        if (!cursor.moveToFirst()) {
+    private String convertToString(boolean[] activeDays) {
+        if (activeDays == null) {
             return null;
         }
 
-        return new AlarmClock(
-                cursor.getInt(cursor.getColumnIndex("id")),
-                cursor.getInt(cursor.getColumnIndex("hour")),
-                cursor.getInt(cursor.getColumnIndex("minute")),
-                (cursor.getInt(cursor.getColumnIndex("active")) == 1),
-                (cursor.getInt(cursor.getColumnIndex("repeat")) == 1),
-                (cursor.getInt(cursor.getColumnIndex("camera")) == 1),
-                null);
+        String activeDaysIndices = "";
+
+        for (int i = 0; i < activeDays.length; i++) {
+            if (activeDays[i]) {
+                activeDaysIndices += i;
+            }
+        }
+
+        return activeDaysIndices;
     }
 
-    public void close() {
-        databaseHelper.close();
+    private boolean[] convertToBooleanArray(String activeDaysIndices) {
+        if (activeDaysIndices == null) {
+            return null;
+        }
+
+        char[] activeDaysIndicesArray = activeDaysIndices.toCharArray();
+        boolean[] activeDays = new boolean[7];
+
+        for (int i = 0; i < activeDays.length; i++) {
+            activeDays[i] = false;
+        }
+
+        for (char index : activeDaysIndicesArray) {
+            activeDays[Character.getNumericValue(index)] = true;
+        }
+
+        return activeDays;
     }
 }
 
@@ -131,12 +169,12 @@ class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "onCreate");
 
         database.execSQL("create table " + AlarmClockDatabase.tableName + " ("
-            + "id integer primary key autoincrement,"
-            + "hour integer,"
-            + "minute integer,"
-            + "active integer,"
-            + "repeat integer,"
-            + "camera integer" + ");");
+                + "id integer primary key autoincrement,"
+                + "hour integer,"
+                + "minute integer,"
+                + "active integer,"
+                + "activeDays text,"
+                + "camera integer" + ");");
     }
 
     @Override

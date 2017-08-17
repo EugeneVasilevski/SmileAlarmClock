@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         }*/
 
         AlarmClock alarmClock = new AlarmClock(0, timePicker.getCurrentHour(),
-                timePicker.getCurrentMinute(), true, false, false, null);
+                timePicker.getCurrentMinute(), true, false, null);
         alarmClock.setId(0);
         AlarmClockTask alarmClockTask = new AlarmClockTask(this);
         alarmClockTask.start(alarmClock);
@@ -86,23 +86,28 @@ public class MainActivity extends AppCompatActivity {
     int id = 0;
 
     public void click(View view) {
-       AlarmClock alarmClock = new AlarmClock(0, timePicker.getCurrentHour(),
+       /*AlarmClock alarmClock = new AlarmClock(0, timePicker.getCurrentHour(),
                 timePicker.getCurrentMinute(), true, false, false, null);
         alarmClock.setId(id);
         id++;
         AlarmClockTask alarmClockTask = new AlarmClockTask(this);
-        alarmClockTask.start(alarmClock);
+        alarmClockTask.start(alarmClock);*/
 
         Log.d(TAG, "click");
 
-        /*AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
+        boolean[] activeDays = {false, true, false, false, false, false, false};
+
+        AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(this);
         alarmClockDatabase.connection();
         alarmClockDatabase.add(new AlarmClock(0, timePicker.getCurrentHour(),
-                timePicker.getCurrentMinute(), true, false, false, null));
+                timePicker.getCurrentMinute(), true, false, null));
 
-        ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAllActive();
+        ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAll();
+
         //textView.setText(Integer.toString(alarmClockList.get(0).getMinute()));
-        textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getId()));
-        alarmClockDatabase.close();*/
+        //textView.setText(Integer.toString(alarmClockList.get(alarmClockList.size() - 1).getId()));
+
+        textView.setText(Boolean.toString(alarmClockList.get(alarmClockList.size() - 1).getActiveDays()[1]));
+        alarmClockDatabase.close();
     }
 }
