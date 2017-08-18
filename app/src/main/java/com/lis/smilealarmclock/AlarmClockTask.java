@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class AlarmClockTask {
 
@@ -37,7 +37,7 @@ public class AlarmClockTask {
         //startTaskAfterReboot();
     }
 
-    public void startAll(ArrayList<AlarmClock> alarmClockList) {
+    public void startAll(List<AlarmClock> alarmClockList) {
         for (AlarmClock alarmClock : alarmClockList) {
             start(alarmClock);
         }

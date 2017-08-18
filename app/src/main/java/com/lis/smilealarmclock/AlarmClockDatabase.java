@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlarmClockDatabase {
 
@@ -54,7 +55,7 @@ public class AlarmClockDatabase {
     }
 
     public AlarmClock getById(int id) {
-        ArrayList<AlarmClock> alarmClockList = getAlarmClockList(database.query(tableName,
+        List<AlarmClock> alarmClockList = getAlarmClockList(database.query(tableName,
                 null, "id = " + id, null, null, null, null));
 
         if (alarmClockList == null) {
@@ -64,12 +65,12 @@ public class AlarmClockDatabase {
         return alarmClockList.get(0);
     }
 
-    public ArrayList<AlarmClock> getAll() {
+    public List<AlarmClock> getAll() {
         return getAlarmClockList(database.query(tableName, null, null,
                 null, null, null, null));
     }
 
-    public ArrayList<AlarmClock> getAllActive() {
+    public List<AlarmClock> getAllActive() {
         return getAlarmClockList(database.query(tableName, null, "active = 1",
                 null, null, null, null));
     }
@@ -93,12 +94,12 @@ public class AlarmClockDatabase {
     }
 
     @Nullable
-    private ArrayList<AlarmClock> getAlarmClockList(Cursor cursor) {
+    private List<AlarmClock> getAlarmClockList(Cursor cursor) {
         if (!cursor.moveToFirst()) {
             return null;
         }
 
-        ArrayList<AlarmClock> alarmClockList  = new ArrayList<>(cursor.getCount());
+        List<AlarmClock> alarmClockList  = new ArrayList<>(cursor.getCount());
 
         /*int idIndex = cursor.getColumnIndex("id");
         int hourIndex = cursor.getColumnIndex("hour");

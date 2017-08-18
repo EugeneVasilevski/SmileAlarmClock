@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class AlarmClockTaskBootReceiver extends BroadcastReceiver {
 
@@ -20,7 +20,7 @@ public class AlarmClockTaskBootReceiver extends BroadcastReceiver {
             AlarmClockDatabase alarmClockDatabase = new AlarmClockDatabase(context);
 
             if (alarmClockDatabase.connection()) {
-                ArrayList<AlarmClock> alarmClockList = alarmClockDatabase.getAllActive();
+                List<AlarmClock> alarmClockList = alarmClockDatabase.getAllActive();
                 if (alarmClockList != null) {
                     new AlarmClockTask(context).startAll(alarmClockList);
                 }
