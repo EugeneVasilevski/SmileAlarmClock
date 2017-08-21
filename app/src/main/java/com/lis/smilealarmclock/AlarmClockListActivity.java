@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class AlarmClockListActivity extends AppCompatActivity {
@@ -47,6 +50,53 @@ public class AlarmClockListActivity extends AppCompatActivity {
         private List<AlarmClock> alarmClockList;
         private AlarmClockHolder alarmClockHolder;
 
+        class AlarmClockHolder extends RecyclerView.ViewHolder {
+
+            CardView cardView;
+            TextView hour;
+            TextView minute;
+            TextView period;
+            Button delete;
+
+            public AlarmClockHolder(View itemView) {
+                super(itemView);
+
+                cardView = (CardView) itemView.findViewById(R.id.card_view);
+                hour = (TextView) itemView.findViewById(R.id.hour);
+                minute = (TextView) itemView.findViewById(R.id.minute);
+                period = (TextView) itemView.findViewById(R.id.period);
+                delete = (Button) itemView.findViewById(R.id.delete);
+
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alarmClockList.remove(getPosition());
+                        notifyItemRemoved(getPosition());
+                    }
+                });
+
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alarmClockList.add(new AlarmClock(0, 20, 13, false, false, null));
+
+                        notifyItemInserted(alarmClockList.size() - 1);
+                        //notifyDataSetChanged();
+
+                        /*Collections.sort(alarmClockList, new Comparator<AlarmClock>() {
+                            @Override
+                            public int compare(AlarmClock alarmClock1, AlarmClock alarmClock2) {
+                                if (alarmClock1.getHour() > alarmClock2.getHour()) {
+                                    return 1;
+                                }
+                                return 0;
+                            }
+                        });*/
+                    }
+                });
+            }
+        }
+
         RecyclerViewAdapter(List<AlarmClock> alarmClockList) {
             this.alarmClockList = alarmClockList;
         }
@@ -76,42 +126,6 @@ public class AlarmClockListActivity extends AppCompatActivity {
         @Override
         public void onAttachedToRecyclerView(RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
-        }
-
-         class AlarmClockHolder extends RecyclerView.ViewHolder {
-
-             CardView cardView;
-             TextView hour;
-             TextView minute;
-             TextView period;
-             Button delete;
-
-             public AlarmClockHolder(View itemView) {
-                 super(itemView);
-
-                 cardView = (CardView) itemView.findViewById(R.id.card_view);
-                 hour = (TextView) itemView.findViewById(R.id.hour);
-                 minute = (TextView) itemView.findViewById(R.id.minute);
-                 period = (TextView) itemView.findViewById(R.id.period);
-                 delete = (Button) itemView.findViewById(R.id.delete);
-
-                 delete.setOnClickListener(new View.OnClickListener() {
-                     @Override
-                     public void onClick(View view) {
-                         alarmClockList.remove(getPosition());
-                         notifyItemRemoved(getPosition());
-                         //notifyItemInserted();
-                     }
-                 });
-
-                 itemView.setOnClickListener(new View.OnClickListener() {
-                     @Override
-                     public void onClick(View view) {
-                         alarmClockList.add(new AlarmClock(0, 20, 13, false, false, null));
-                         notifyItemInserted(alarmClockList.size() - 1);
-                     }
-                 });
-             }
         }
     }
 }
